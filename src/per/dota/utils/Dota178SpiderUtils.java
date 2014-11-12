@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import per.dota.pojo.DotaVideoPojo;
 import per.weixin.utils.HttpClientUtils;
@@ -36,6 +38,15 @@ public class Dota178SpiderUtils {
 				String brief = video.getString("brief");
 				String picurl = video.getString("picurl");
 				String url = video.getString("url");
+
+				try {
+					String videoBody = HttpClientUtils.doGet(httpClient, url);
+					Document doc = Jsoup.parse(videoBody);
+					url = doc.select("#text iframe").attr("src");
+				} catch (Exception e) {
+					url = video.getString("url");
+				}
+
 				String author = video.getString("time");
 				String time = video.getString("author");
 
